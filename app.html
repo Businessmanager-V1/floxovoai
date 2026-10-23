@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Floxovo turns your lessons into notes, flashcards, quizzes, and a friendly AI tutor.">
+<title>Floxovo</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="bar">
+    <a class="logo" href="index.html" aria-label="Floxovo home"><span class="logo-mark" aria-hidden="true">✦</span> Floxovo</a>
+    <nav aria-label="Main">
+      <button class="ghost" data-view="home" aria-current="page">Home</button>
+      <button class="ghost" data-view="library">Library</button>
+      <button class="ghost" data-view="study">Study</button>
+      <button class="ghost" data-view="tutor">Tutor</button>
+      <button class="ghost" data-view="progress">Progress</button>
+    </nav>
+    <button class="theme-btn" id="accountBtn">Sign in</button>
+    <a class="theme-btn link-btn" href="support.html">Help</a>
+    <button class="theme-btn" id="themeBtn" aria-label="Toggle light or dark theme">🌙</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <h1>Learn anything, <span class="emoji-float">🚀</span> one step at a time</h1>
+      <p>Upload a PDF, Word file, or paste your notes. Floxovo builds flashcards, a quiz, and clear notes. A friendly tutor is ready when you get stuck.</p>
+    </div>
+
+    <div class="card">
+      <h2>1. Add your material</h2>
+      <div class="row">
+        <label class="btn-like" for="fileInput">📄 Upload PDF, DOCX, TXT, or MD</label>
+        <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.md" class="sr-only">
+        <span class="muted">Up to 10 MB</span>
+      </div>
+      <p class="muted" style="margin-top:14px;">Or paste text below. Tip: write flashcards as <b>Term: definition</b>.</p>
+      <textarea id="source" placeholder="Photosynthesis: the process plants use to make food from sunlight..."></textarea>
+      <div class="row" style="margin-top:10px;">
+        <span class="muted" id="wordCount"></span>
+        <button class="soft" id="sampleBtn" style="margin-left:auto;">Try an example</button>
+        <button class="soft" id="clearBtn">Clear</button>
+      </div>
+
+      <h2 style="margin-top:22px;">2. Name it and create</h2>
+      <div class="row">
+        <input type="text" id="titleInput" maxlength="120" placeholder="Name this study set (e.g. Biology Chapter 3)" aria-label="Study set name" style="flex:1;">
+        <button id="makeBtn">Create my study set ✨</button>
+      </div>
+      <p class="muted" id="homeMsg" role="status"></p>
+    </div>
+  </section>
+
+  <!-- LIBRARY -->
+  <section class="view" id="view-library">
+    <div class="row" style="justify-content:space-between; margin-bottom:14px;">
+      <h2 style="margin:0;">Your library 📚</h2>
+      <span class="muted" id="syncStatus"></span>
+    </div>
+    <div class="grid cols-2" id="setList"></div>
+  </section>
+
+  <!-- STUDY -->
+  <section class="view" id="view-study">
+    <div class="row" style="justify-content: space-between; margin-bottom: 14px;">
+      <h2 style="margin:0;" id="studyTitle">Pick a study set</h2>
+      <div class="row" role="tablist" aria-label="Study modes">
+        <button class="ghost" data-mode="cards" role="tab">Flashcards</button>
+        <button class="ghost" data-mode="quiz" role="tab">Quiz</button>
+        <button class="ghost" data-mode="notes" role="tab">Notes</button>
+      </div>
+    </div>
+
+    <div id="mode-cards">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;">
+          <span class="pill" id="cardBox">Box 1</span>
+          <span class="muted" id="cardCount"></span>
+        </div>
+        <div class="scene" style="margin-top:14px;">
+          <div class="flip" id="flip" tabindex="0" role="button" aria-label="Flip card">
+            <div class="face front" id="frontFace">Open a study set from your Library</div>
+            <div class="face back" id="backFace"></div>
+          </div>
+        </div>
+        <div class="row" style="justify-content:center; margin-top:18px;">
+          <button class="soft" id="wrongBtn" disabled>🤔 Still learning</button>
+          <button id="rightBtn" disabled>🎉 Got it!</button>
+        </div>
+        <p class="muted" style="text-align:center; margin-top:10px;">Tap the card to flip it. Cards you miss come back sooner.</p>
+      </div>
+    </div>
+
+    <div id="mode-quiz" class="hidden">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;">
+          <h3 style="margin:0;">Fill in the blank</h3>
+          <span class="muted" id="quizScore"></span>
+        </div>
+        <div id="quizArea"></div>
+        <div class="row" style="margin-top:14px;">
+          <button class="soft" id="newQuizBtn">Shuffle questions</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="mode-notes" class="hidden">
+      <div class="card" id="notesArea"></div>
+    </div>
+  </section>
+
+  <!-- TUTOR -->
+  <section class="view" id="view-tutor">
+    <div class="card">
+      <h2>Ask your tutor 🧑‍🏫</h2>
+      <p class="muted">I give hints first, then explain. Ask me anything about your study set!</p>
+      <div class="chat" id="chat" aria-live="polite">
+        <div class="bubble ai">Hi! I'm your study buddy. Ask me a question, and I'll help you figure it out step by step.</div>
+      </div>
+      <div class="row" style="margin-top:14px; flex-wrap:nowrap;">
+        <input type="text" id="chatInput" placeholder="Type your question…" aria-label="Your question" maxlength="500">
+        <button id="sendBtn">Send</button>
+      </div>
+      <p class="muted" id="tutorMsg" role="status"></p>
+    </div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="view" id="view-progress">
+    <h2>Your progress 🌟</h2>
+    <div class="grid cols-3" style="margin-bottom:18px;">
+      <div class="card"><div class="muted">Cards mastered</div><div class="stat-num" id="statMastered">0</div></div>
+      <div class="card"><div class="muted">Total cards</div><div class="stat-num" id="statTotal">0</div></div>
+      <div class="card"><div class="muted">Quiz answers right</div><div class="stat-num" id="statQuiz">0%</div></div>
+    </div>
+    <div class="card">
+      <h3>Mastery across all study sets</h3>
+      <div class="bar-track"><div class="bar-fill" id="masteryBar"></div></div>
+      <p class="muted" id="masteryText" style="margin-top:10px;"></p>
+      <div class="row" style="margin-top:14px;">
+        <button class="soft" id="resetBtn">Reset all progress and sets</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot small"><a href="about.html">About</a> · <a href="support.html">Support</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="cookies.html">Cookies</a> · <a href="acceptable-use.html">Acceptable Use</a></footer>
+
+<!-- SIGN IN MODAL -->
+<div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="modal-card">
+    <button class="close" id="authClose" aria-label="Close sign in">✕</button>
+
+    <div id="authLogin">
+      <h2 id="authTitle">Welcome back 👋</h2>
+      <div class="row tabs-auth">
+        <button class="ghost" id="tabSignin" aria-selected="true">Sign in</button>
+        <button class="ghost" id="tabSignup" aria-selected="false">Create account</button>
+      </div>
+      <form id="authForm">
+        <input type="email" id="authEmail" placeholder="Email" autocomplete="email" required>
+        <input type="password" id="authPassword" placeholder="Password (8+ characters)" minlength="8" autocomplete="current-password" required>
+        <label class="check hidden" id="ageRow">
+          <input type="checkbox" id="ageCheck">
+          I am 13 or older, or a parent or guardian is creating this account for a child.
+        </label>
+        <button type="submit" id="authSubmit" class="wide">Sign in</button>
+      </form>
+      <div class="divider"><span>or</span></div>
+      <button class="soft wide" id="googleBtn">Continue with Google</button>
+      <button class="link" id="forgotBtn">Forgot password?</button>
+      <p class="muted" id="authMsg" role="status"></p>
+    </div>
+
+    <form id="recoverForm" class="hidden">
+      <h2>Choose a new password</h2>
+      <input type="password" id="newPassword" placeholder="New password (8+ characters)" minlength="8" autocomplete="new-password" required>
+      <button type="submit" class="wide">Save password</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast-zone" id="toastZone" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
